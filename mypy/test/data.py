@@ -246,7 +246,7 @@ class DataDrivenTestCase(pytest.Item):
     """Holds parsed data-driven test cases, and handles directory setup and teardown."""
 
     # Override parent member type
-    parent: DataSuiteCollector
+    parent: DataSuiteCollector | DataFileCollector
 
     input: list[str]
     output: list[str]  # Output for the first pass
@@ -277,7 +277,7 @@ class DataDrivenTestCase(pytest.Item):
 
     def __init__(
         self,
-        parent: DataSuiteCollector,
+        parent: DataSuiteCollector | DataFileCollector,
         suite: DataSuite,
         *,
         file: str,
@@ -292,7 +292,6 @@ class DataDrivenTestCase(pytest.Item):
         line: int,
     ) -> None:
         super().__init__(name, parent)
-        assert not isinstance(parent, DataFileCollector)  # type: ignore[unreachable]
         self.suite = suite
         self.file = file
         self.writescache = writescache
