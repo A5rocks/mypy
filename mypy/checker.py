@@ -2780,8 +2780,9 @@ class TypeChecker(NodeVisitor[None], CheckerPluginInterface):
     def determine_type_of_member(self, sym: SymbolTableNode) -> Type | None:
         if sym.type is not None:
             return sym.type
+        # TODO: mypy_extensions.trait is bad with reachability
         if isinstance(sym.node, FuncBase):
-            return self.function_type(sym.node)
+            return self.function_type(sym.node)  # type: ignore[unreachable]
         if isinstance(sym.node, TypeInfo):
             if sym.node.typeddict_type:
                 # We special-case TypedDict, because they don't define any constructor.
@@ -4340,8 +4341,9 @@ class TypeChecker(NodeVisitor[None], CheckerPluginInterface):
         if isinstance(rvalue, (IntExpr, StrExpr, BytesExpr, FloatExpr, RefExpr)):
             return True
         if isinstance(rvalue, CallExpr):
+            # TODO: mypy_extensions.trait is bad with reachability
             if isinstance(rvalue.callee, RefExpr) and isinstance(rvalue.callee.node, FuncBase):
-                typ = rvalue.callee.node.type
+                typ = rvalue.callee.node.type  # type: ignore[unreachable]
                 if isinstance(typ, CallableType):
                     return not typ.variables
                 elif isinstance(typ, Overloaded):

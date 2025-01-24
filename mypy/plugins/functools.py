@@ -108,8 +108,9 @@ def _analyze_class(ctx: mypy.plugin.ClassDefContext) -> dict[str, _MethodInfo | 
         for name in _ORDERING_METHODS:
             if name in cls.names and name not in comparison_methods:
                 node = cls.names[name].node
-                if isinstance(node, FuncItem) and isinstance(node.type, CallableType):
-                    comparison_methods[name] = _MethodInfo(node.is_static, node.type)
+                # TODO: mypy_extensions.trait is bad with reachability
+                if isinstance(node, FuncItem) and isinstance(node.type, CallableType):  # type: ignore[unreachable]
+                    comparison_methods[name] = _MethodInfo(node.is_static, node.type)  # type: ignore[unreachable]
                     continue
 
                 if isinstance(node, Var):

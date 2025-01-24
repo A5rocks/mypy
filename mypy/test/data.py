@@ -292,6 +292,7 @@ class DataDrivenTestCase(pytest.Item):
         line: int,
     ) -> None:
         super().__init__(name, parent)
+        assert not isinstance(parent, DataFileCollector)  # type: ignore[unreachable]
         self.suite = suite
         self.file = file
         self.writescache = writescache

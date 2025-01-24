@@ -3076,8 +3076,8 @@ class SemanticAnalyzer(
             for name, node in m.names.items():
                 fullname = i_id + "." + name
                 self.set_future_import_flags(fullname)
-                if node is None:
-                    continue
+                assert node is not None
+
                 # if '__all__' exists, all nodes not included have had module_public set to
                 # False, and we can skip checking '_' because it's been explicitly included.
                 if node.module_public and (not name.startswith("_") or "__all__" in m.names):
@@ -5703,12 +5703,13 @@ class SemanticAnalyzer(
                 return
             reveal_imported = False
             reveal_type_node = self.lookup("reveal_type", expr, suppress_errors=True)
+            # TODO: mypy_extensions.trait is bad with reachability
             if (
                 reveal_type_node
                 and isinstance(reveal_type_node.node, FuncBase)
-                and reveal_type_node.fullname in IMPORTED_REVEAL_TYPE_NAMES
+                and reveal_type_node.fullname in IMPORTED_REVEAL_TYPE_NAMES  # type: ignore[unreachable]
             ):
-                reveal_imported = True
+                reveal_imported = True  # type: ignore[unreachable]
             expr.analyzed = RevealExpr(
                 kind=REVEAL_TYPE, expr=expr.args[0], is_imported=reveal_imported
             )

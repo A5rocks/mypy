@@ -13,8 +13,9 @@ def update_testcase_output(
     if testcase.xfail:
         return
     collector = testcase.parent
-    assert isinstance(collector, DataFileCollector)
-    for fix in _iter_fixes(testcase, actual, incremental_step=incremental_step):
+    assert isinstance(collector, DataFileCollector)  # type: ignore[unreachable]
+    assert False
+    for fix in _iter_fixes(testcase, actual, incremental_step=incremental_step):  # type: ignore[unreachable]
         collector.enqueue_fix(fix)
 
 

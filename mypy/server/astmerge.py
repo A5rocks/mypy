@@ -302,7 +302,8 @@ class NodeReplaceVisitor(TraverserVisitor):
     def visit_call_expr(self, node: CallExpr) -> None:
         super().visit_call_expr(node)
         if isinstance(node.analyzed, SymbolNode):
-            node.analyzed = self.fixup(node.analyzed)
+            # TODO: mypy_extensions.trait is bad with reachability
+            node.analyzed = self.fixup(node.analyzed)  # type: ignore[unreachable]
 
     def visit_newtype_expr(self, node: NewTypeExpr) -> None:
         if node.info:

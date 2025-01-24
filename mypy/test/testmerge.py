@@ -175,7 +175,8 @@ class ASTMergeSuite(DataSuite):
         if isinstance(node.node, Node):
             s = f"{str(type(node.node).__name__)}<{self.id_mapper.id(node.node)}>"
         else:
-            s = f"? ({type(node.node)})"
+            # TODO: is this possible due to mypy_extensions.trait?
+            s = f"? ({type(node.node)})"  # type: ignore[unreachable]
         if (
             isinstance(node.node, Var)
             and node.node.type

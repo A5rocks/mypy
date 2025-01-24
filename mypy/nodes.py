@@ -172,8 +172,7 @@ class Node(Context):
 
     def __str__(self) -> str:
         ans = self.accept(mypy.strconv.StrConv(options=Options()))
-        if ans is None:
-            return repr(self)
+        assert ans is not None
         return ans
 
     def str_with_options(self, options: Options) -> str:
@@ -3251,7 +3250,8 @@ class TypeInfo(SymbolNode):
             if name in cls.names:
                 node = cls.names[name].node
                 if isinstance(node, FuncBase):
-                    return node
+                    # TODO: mypy_extensions.trait is bad with reachability
+                    return node  # type: ignore[unreachable]
                 elif isinstance(node, Decorator):  # Two `if`s make `mypyc` happy
                     return node
                 else:
@@ -4009,7 +4009,8 @@ class SymbolTable(dict[str, SymbolTableNode]):
                 ):
                     a.append("  " + str(key) + " : " + str(value))
             else:
-                a.append("  <invalid item>")
+                # fallback for bad code
+                a.append("  <invalid item>")  # type: ignore[unreachable]
         a = sorted(a)
         a.insert(0, "SymbolTable(")
         a[-1] += ")"

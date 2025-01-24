@@ -571,8 +571,7 @@ def hash_digest(data: bytes) -> str:
 
 def parse_gray_color(cup: bytes) -> str:
     """Reproduce a gray color in ANSI escape sequence"""
-    if sys.platform == "win32":
-        assert False, "curses is not available on Windows"
+    assert sys.platform != "win32", "curses is not available on Windows"
     set_color = "".join([cup[:-1].decode(), "m"])
     gray = curses.tparm(set_color.encode("utf-8"), 1, 9).decode()
     return gray
@@ -640,35 +639,34 @@ class FancyFormatter:
         # we check with an assert at runtime and an if check for mypy, as asserts do not
         # yet narrow platform
         assert sys.platform == "win32"
-        if sys.platform == "win32":
-            winver = sys.getwindowsversion()
-            if (
-                winver.major < MINIMUM_WINDOWS_MAJOR_VT100
-                or winver.build < MINIMUM_WINDOWS_BUILD_VT100
-            ):
-                return False
-            import ctypes
+        winver = sys.getwindowsversion()
+        if (
+            winver.major < MINIMUM_WINDOWS_MAJOR_VT100
+            or winver.build < MINIMUM_WINDOWS_BUILD_VT100
+        ):
+            return False
+        import ctypes
 
-            kernel32 = ctypes.windll.kernel32
-            ENABLE_PROCESSED_OUTPUT = 0x1
-            ENABLE_WRAP_AT_EOL_OUTPUT = 0x2
-            ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x4
-            STD_OUTPUT_HANDLE = -11
-            kernel32.SetConsoleMode(
-                kernel32.GetStdHandle(STD_OUTPUT_HANDLE),
-                ENABLE_PROCESSED_OUTPUT
-                | ENABLE_WRAP_AT_EOL_OUTPUT
-                | ENABLE_VIRTUAL_TERMINAL_PROCESSING,
-            )
-            self.initialize_vt100_colors()
-            return True
-        return False
+        kernel32 = ctypes.windll.kernel32
+        ENABLE_PROCESSED_OUTPUT = 0x1
+        ENABLE_WRAP_AT_EOL_OUTPUT = 0x2
+        ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x4
+        STD_OUTPUT_HANDLE = -11
+        kernel32.SetConsoleMode(
+            kernel32.GetStdHandle(STD_OUTPUT_HANDLE),
+            ENABLE_PROCESSED_OUTPUT
+            | ENABLE_WRAP_AT_EOL_OUTPUT
+            | ENABLE_VIRTUAL_TERMINAL_PROCESSING,
+        )
+        self.initialize_vt100_colors()
+        return True
 
     def initialize_unix_colors(self) -> bool:
         """Return True if initialization was successful and we can use colors, False otherwise"""
         if sys.platform == "win32" or not CURSES_ENABLED:
             return False
-        try:
+        # https://github.com/python/mypy/issues/10773
+        try:  # type: ignore[unreachable]
             # setupterm wants a fd to potentially write an "initialization sequence".
             # We override sys.stdout for the daemon API so if stdout doesn't have an fd,
             # just give it /dev/null.

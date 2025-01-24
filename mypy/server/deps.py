@@ -501,8 +501,9 @@ class DependencyVisitor(TraverserVisitor):
                 if isinstance(rvalue.callee.node, TypeInfo):
                     # use actual __init__ as a dependency source
                     init = rvalue.callee.node.get("__init__")
+                    # TODO: mypy_extensions.trait is bad with reachability
                     if init and isinstance(init.node, FuncBase):
-                        fname = init.node.fullname
+                        fname = init.node.fullname  # type: ignore[unreachable]
                 else:
                     fname = rvalue.callee.fullname
                 if not fname:

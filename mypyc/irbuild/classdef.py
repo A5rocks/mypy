@@ -549,7 +549,7 @@ def populate_non_ext_bases(builder: IRBuilder, cdef: ClassDef) -> Value:
                     module = "typing_extensions"
                     # TypedDict is not a real type on typing_extensions 4.7.0+
                     name = "_TypedDict"
-                    if isinstance(typing_extensions.TypedDict, type):
+                    if isinstance(typing_extensions.TypedDict, type):  # type: ignore[unreachable]
                         raise RuntimeError(
                             "It looks like you may have an old version "
                             "of typing_extensions installed. "

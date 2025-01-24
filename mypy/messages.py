@@ -2132,12 +2132,10 @@ class MessageBuilder:
         is_module = False
         skip = []
         if isinstance(subtype, TupleType):
-            if not isinstance(subtype.partial_fallback, Instance):
-                return
+            assert isinstance(subtype.partial_fallback, Instance)
             subtype = subtype.partial_fallback
         elif isinstance(subtype, TypedDictType):
-            if not isinstance(subtype.fallback, Instance):
-                return
+            assert isinstance(subtype.fallback, Instance)
             subtype = subtype.fallback
         elif isinstance(subtype, TypeType):
             if not isinstance(subtype.item, Instance):

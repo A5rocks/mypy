@@ -234,9 +234,10 @@ def snapshot_definition(node: SymbolNode | None, common: SymbolSnapshot) -> Symb
     The representation is nested tuples and dicts. Only externally
     visible attributes are included.
     """
+    # TODO: mypy_extensions.trait is bad with reachability
     if isinstance(node, FuncBase):
         # TODO: info
-        if node.type:
+        if node.type:  # type: ignore[unreachable]
             signature = snapshot_type(node.type)
         else:
             signature = snapshot_untyped_signature(node)

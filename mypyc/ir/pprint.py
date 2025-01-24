@@ -222,15 +222,11 @@ class IRPrettyPrintVisitor(OpVisitor[str]):
     def visit_primitive_op(self, op: PrimitiveOp) -> str:
         args = []
         arg_index = 0
-        type_arg_index = 0
-        for arg_type in zip(op.desc.arg_types):
-            if arg_type:
-                args.append(self.format("%r", op.args[arg_index]))
-                arg_index += 1
-            else:
-                assert op.type_args
-                args.append(self.format("%r", op.type_args[type_arg_index]))
-                type_arg_index += 1
+        type_arg_index = 0  # noqa: F841
+        for arg_type in op.desc.arg_types:
+            assert arg_type
+            args.append(self.format("%r", op.args[arg_index]))
+            arg_index += 1
 
         args_str = ", ".join(args)
         if op.is_void:

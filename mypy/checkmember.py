@@ -1110,11 +1110,12 @@ def analyze_class_attribute_access(
             #     C[int].x -> int
             t = erase_typevars(expand_type_by_instance(t, isuper), {tv.id for tv in def_vars})
 
+        # TODO: the following unreachables are due to mypy_extensions.trait
         is_classmethod = (is_decorated and cast(Decorator, node.node).func.is_class) or (
-            isinstance(node.node, FuncBase) and node.node.is_class
+            isinstance(node.node, FuncBase) and node.node.is_class  # type: ignore[unreachable]
         )
         is_staticmethod = (is_decorated and cast(Decorator, node.node).func.is_static) or (
-            isinstance(node.node, FuncBase) and node.node.is_static
+            isinstance(node.node, FuncBase) and node.node.is_static  # type: ignore[unreachable]
         )
         t = get_proper_type(t)
         if isinstance(t, FunctionLike) and is_classmethod:
@@ -1157,7 +1158,8 @@ def analyze_class_attribute_access(
             return AnyType(TypeOfAny.from_error)
     else:
         assert isinstance(node.node, FuncBase)
-        typ = function_type(node.node, mx.named_type("builtins.function"))
+        # TODO: another case where mypy_extensions.trait falsely causes unreachable code
+        typ = function_type(node.node, mx.named_type("builtins.function"))  # type: ignore[unreachable]
         # Note: if we are accessing class method on class object, the cls argument is bound.
         # Annotated and/or explicit class methods go through other code paths above, for
         # unannotated implicit class methods we do this here.
@@ -1416,7 +1418,8 @@ def is_valid_constructor(n: SymbolNode | None) -> bool:
     that return a callable type.
     """
     if isinstance(n, FuncBase):
-        return True
+        # TODO: mypy_extensions.trait is bad with reachability
+        return True  # type: ignore[unreachable]
     if isinstance(n, Decorator):
         return isinstance(get_proper_type(n.type), FunctionLike)
     return False
