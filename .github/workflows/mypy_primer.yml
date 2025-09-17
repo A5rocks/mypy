@@ -56,13 +56,21 @@ jobs:
           echo "base commit"
           git rev-list --format=%s --max-count=1 base_commit
 
+          # if possible, reuse a compiled wheel for old
+          git checkout base_commit
+          WHEEL_VERSION="$(sed -rn 's/__version__ = "(.+)"/\1/p' mypy/version.py).$MERGE_BASE"
+          if wget -q "https://github.com/mypyc/mypy_mypyc-wheels/releases/expanded_assets/v$WHEEL_VERSION"; then
+            PIP_FIND_LINKS=https://github.com/mypyc/mypy_mypyc-wheels/releases/expanded_assets/v$WHEEL_VERSION
+            MERGE_BASE=v$WHEEL_VERSION
+          fi
+
           echo ''
           cd ..
           # fail action if exit code isn't zero or one
           (
             mypy_primer \
             --repo mypy_to_test \
-            --new $GITHUB_SHA --old base_commit \
+            --new $GITHUB_SHA --old $MERGE_BASE \
             --num-shards 6 --shard-index ${{ matrix.shard-index }} \
             --debug \
             --additional-flags="--debug-serialize" \
