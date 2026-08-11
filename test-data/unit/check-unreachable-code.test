@@ -1751,3 +1751,9 @@ assert sys.platform == "win32"
 if False:
     reveal_type(5)  # E: Statement is unreachable \
                     # N: Revealed type is "Literal[5]?"
+
+[case testCheckUnreachableOnlyFlagsOnce]
+# flags: --check-unreachable --warn-unreachable
+if False:
+    if False:  # E: Statement is unreachable
+        "not flagged!"

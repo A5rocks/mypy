@@ -619,6 +619,7 @@ class TypeChecker(NodeVisitor[None], TypeCheckerSharedApi, SplittingVisitor):
                                 and not finish
                             ):
                                 self.msg.unreachable_statement(d)
+                                self.binder.suppress_unreachable_warnings()
                                 finish = True
                                 reported_unreachable = True
 
@@ -3331,6 +3332,7 @@ class TypeChecker(NodeVisitor[None], TypeCheckerSharedApi, SplittingVisitor):
                     and not finish
                 ):
                     self.msg.unreachable_statement(s)
+                    self.binder.suppress_unreachable_warnings()
                     finish = True
                     reported_unreachable = True
 
